@@ -1610,8 +1610,7 @@ static int mdc_statfs_async(struct obd_export *exp,
 	ptlrpc_request_set_replen(req);
 	req->rq_interpret_reply = mdc_statfs_interpret;
 
-	CLASSERT(sizeof(*aa) <= sizeof(req->rq_async_args));
-	aa = ptlrpc_req_async_args(req);
+	aa = ptlrpc_req_async_args(aa, req);
 	*aa = *oinfo;
 
 	ptlrpcd_add_req(req);
@@ -2587,7 +2586,7 @@ int mdc_rmfid_interpret(const struct lu_env *env, struct ptlrpc_request *req,
 	ENTRY;
 
 	if (!rc) {
-		aa = ptlrpc_req_async_args(req);
+		aa = ptlrpc_req_async_args(aa, req);
 
 		size = req_capsule_get_size(&req->rq_pill, &RMF_RCS,
 					    RCL_SERVER);
@@ -2638,7 +2637,7 @@ static int mdc_rmfid(struct obd_export *exp, struct fid_array *fa,
 	ptlrpc_request_set_replen(req);
 
 	LASSERT(rcs);
-	aa = ptlrpc_req_async_args(req);
+	aa = ptlrpc_req_async_args(aa, req);
 	aa->mra_rcs = rcs;
 	aa->mra_nr = fa->fa_nr;
 	req->rq_interpret_reply = mdc_rmfid_interpret;
